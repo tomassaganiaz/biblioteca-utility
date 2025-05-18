@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Biblioteca Online</title>
+</head>
+<body>
+	<h1>📚 Bienvenido a la Biblioteca</h1>
+	<p>Elige una acción</p>
+	<p id="msg">Mensaje actual: No se ha realizado ninguna acción.</p>
+
+	<hr>
+	<h2>Registro de Usuario</h2>
+	<form id="form_user">
+		<input id="register_name" type="text" name="nombre" placeholder="Nombre">
+		<input id="register_user_id" type="text" name="usuario_id" placeholder="ID de Usuario">
+		<button id="register_send" type="submit">Registrarse</button>
+	</form>
+
+	<hr>
+	<h2>Agregar un Libro</h2>
+	<form id="form_book">
+		<input id="book_title" type="text" name="titulo" placeholder="Título">
+		<input id="book_author" type="text" name="autor" placeholder="Autor">
+		<input id="book_isbn" type="text" name="isbn" placeholder="ISBN">
+		<button id="book_add" type="submit">Agregar</button>
+	</form>
+
+	<script>
+		// Register user references
+		const formUser = document.getElementById("form_user");
+		const submitUser = document.getElementById("register_send");
+
+		// Register book references
+		const formBook = document.getElementById("form_book");
+		const submitBook = document.getElementById("book_add");
+
+		// Message display
+		const msg = document.getElementById("msg");
+
+		// Functions
+
+		function addUser(e){
+			e.preventDefault();
+			(async () => {
+				const prePayload = new FormData(formUser)
+				const payload = new URLSearchParams(prePayload)
+
+				const response = await fetch("/registrar_usuario", {
+					method: "POST",
+					body: payload,
+				});
+
+				if (!response.ok){
+					msg.innerText = "Mensaje actual: Ocurrió un error inesperado.";
+					msg.style.color = "red";
+					return;
+				}
+
+				const svMsg = await response.text();
+				msg.style.color = "black";
+				msg.innerText = `Mensaje actual: ${svMsg}`;
+			})()
+		}
+		
+		function addBook(e){
+			e.preventDefault();
+			(async () => {
+				const prePayload = new FormData(formBook)
+				const payload = new URLSearchParams(prePayload)
+
+				const response = await fetch("/agregar_libro", {
+					method: "POST",
+					body: payload,
+				});
+
+				if (!response.ok){
+					msg.innerText = "Mensaje actual: Ocurrió un error inesperado.";
+					msg.style.color = "red";
+					return;
+				}
+
+				const svMsg = await response.text();
+				
+				msg.style.color = "black";
+				msg.innerText = `Mensaje actual: ${svMsg}`;
+			})()
+		}
+
+		// Events listeners
+		submitUser.addEventListener("click", addUser);
+		submitBook.addEventListener("click", addBook);
+	</script>
+</body>
+</html>
